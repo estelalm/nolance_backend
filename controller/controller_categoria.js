@@ -7,7 +7,7 @@
 
 const categoriasDAO = require('../model/DAO/categorias.js')
 const subcategoriasDAO = require('../model/DAO/subcategorias.js')
-const message = require('../modulo/config.js')
+const message = require('../module/config.js')
 
 const getListarCategorias = async function () {
 
