@@ -389,6 +389,75 @@ app.put('/v1/nolance/interesse/:id', cors(), async (request, response) => {
 })
 
 
+//Endpoints: comitentes
+app.get('/v1/nolance/comitentes', cors(), async (request, response, next) =>{
+
+    let dadosComitentes = await controllerComitentes.getListarComitentes()
+
+    response.status(dadosComitentes.status_code)
+    response.json(dadosComitentes)
+
+    next()
+
+})
+
+app.get('/v1/nolance/comitente/:id', cors(), async (request, response, next) =>{
+
+    let idComitente = request.params.id
+
+    let dadosComitentes = await controllerComitentes.getBuscarComitente(idComitente)
+
+    response.status(dadosComitentes.status_code)
+    response.json(dadosComitentes)
+
+    next()
+})
+
+app.post('/v1/nolance/comitente/fisico', cors(), bodyParserJSON, async (request, response, next) =>{
+    let contentType = request.header('content-type')
+    let dadosBody = request.body
+   
+    let resultDadosComitente = await controllerComitentes.setInserirComitenteFisico(dadosBody, contentType)
+
+    response.status(resultDadosComitente.status_code)
+    response.json(resultDadosComitente)
+})
+app.post('/v1/nolance/comitente/juridico', cors(), bodyParserJSON, async (request, response, next) =>{
+    let contentType = request.header('content-type')
+    let dadosBody = request.body
+   
+    let resultDadosComitente = await controllerComitentes.setInserirComitenteJuridico(dadosBody, contentType)
+
+    response.status(resultDadosComitente.status_code)
+    response.json(resultDadosComitente)
+})
+
+
+app.put('/v1/nolance/comitente/:id', cors(), bodyParserJSON, async (request, response, next) =>{
+
+    let idComitente = request.params.id
+
+    let contentType = request.header('content-type')
+    let dadosBody = request.body
+   
+
+    let resultDadosComitente = await controllerComitentes.setAtualizarComitente(idComitente, dadosBody, contentType)
+
+    response.status(resultDadosComitente.status_code)
+    response.json(resultDadosComitente)
+
+})
+
+app.delete('/v1/nolance/comitente/:id', cors(), async (request, response, next) =>{
+
+    let idComitente= request.params.id
+
+    let dadosComitentes = await controllerComitentes.setExcluirComitente(idComitente)
+
+    response.status(dadosComitentes.status_code)
+    response.json(dadosComitentes)
+
+})
 
 app.listen('8080', function(){
     console.log('API funcionando!')
