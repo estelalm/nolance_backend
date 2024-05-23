@@ -134,6 +134,7 @@ app.delete('/v1/nolance/endereco/:id', cors(), async function(request,response){
     response.json(enderecoExcluido)
 })
 
+console.log('lol')
 
 app.listen('8080', function(){
     console.log('API funcionando!')
