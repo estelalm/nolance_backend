@@ -267,6 +267,124 @@ app.delete('/v1/nolance/subcategoria/:id', cors(), async (request, response, nex
 
 })
 
+/**********************************ENDPOINTS : USUÁRIOS *********************************************/
+
+app.get('/v1/nolance/users', cors(), async (request, response) => {
+    let usersData = await controllerUsuarios.listUsers()
+
+    response.status(usersData.status_code)
+    response.json(usersData)
+})
+
+app.post('/v1/nolance/users', cors(), async (request, response) => {
+    let contentType = request.header('content-type')
+
+    let dadosBody = request.body
+
+    let resultNewUserData = await controllerUsuarios.addUser(dadosBody, contentType)
+
+    response.status(resultNewUserData.status_code)
+    response.json(resultNewUserData)
+})
+
+app.put('/v1/nolance/user/:id', cors(), async (request, response) => {
+    let userId = request.params.id
+
+    let contentType = request.header('content-type')
+    let dadosBody = request.body
+
+    let resultUserData = await controllerUsuarios.updateUser(dadosBody, userId, contentType)
+
+    response.status(resultUserData.status_code)
+    response.json(resultUserData)
+})
+
+app.delete('/v1/nolance/user/:id', cors(), async (request, response, next) =>{
+
+    let userId = request.params.id
+
+    let userData = await controllerUsuarios.deleteUser(userId)
+
+    response.status(userData.status_code)
+    response.json(userData)
+
+})
+
+/**********************************ENDPOINTS : FUNCIONÁRIOS *********************************************/
+
+app.get('/v1/nolance/employees', cors(), async (request, response) => {
+    let employeesData = await controllerFuncionarios.listEmployees()
+
+    response.status(employeesData.status_code)
+    response.json(employeesData)
+})
+
+app.post('/v1/nolance/employees', cors(), async (request, response) => {
+    let contentType = request.header('content-type')
+
+    let dadosBody = request.body
+
+    let resultNewEmployeeData = await controllerFuncionarios.addEmployee(dadosBody, contentType)
+
+    response.status(resultNewEmployeeData.status_code)
+    response.json(resultNewEmployeeData)
+})
+
+app.put('/v1/nolance/employee/:id', cors(), async (request, response) => {
+    let employeeId = request.params.id
+
+    let contentType = request.header('content-type')
+    let dadosBody = request.body
+
+    let resultEmployeeData = await controllerFuncionarios.updateEmployee(dadosBody, employeeId, contentType)
+
+    response.status(resultEmployeeData.status_code)
+    response.json(resultEmployeeData)
+})
+
+app.delete('/v1/nolance/employee/:id', cors(), async (request, response, next) =>{
+
+    let employeeId = request.params.id
+
+    let employeeData = await controllerFuncionarios.deleteEmployee(employeeId)
+
+    response.status(employeeData.status_code)
+    response.json(employeeData)
+
+})
+
+
+/**********************************ENDPOINTS : FUNCIONÁRIOS *********************************************/
+app.get('/v1/nolance/interesses', cors(), async (request, response) => {
+    let dadosInteresses = await controllerInteresses.listInteresses()
+
+    response.status(dadosInteresses.status_code)
+    response.json(dadosInteresses)
+})
+
+app.post('/v1/nolance/interesses', cors(), async (request, response) => {
+    let contentType = request.header('content-type')
+
+    let dadosBody = request.body
+
+    let resultNewInterest = await controllerInteresses.addNewUserInterest(dadosBody, contentType)
+
+    response.status(resultNewInterest.status_code)
+    response.json(resultNewInterest)
+})
+
+app.put('/v1/nolance/interesse/:id', cors(), async (request, response) => {
+    let interesseId = request.params.id
+
+    let contentType = request.header('content-type')
+    let dadosBody = request.body
+
+    let resultInteresseDados = await controllerInteresses.updateInterest(dadosBody, contentType, interesseId)
+
+    response.status(resultInteresseDados.status_code)
+    response.json(resultInteresseDados)
+})
+
 
 
 app.listen('8080', function(){
