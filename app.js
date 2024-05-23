@@ -28,6 +28,9 @@ const controllerModalidade = require('./controller/controller_modalidade.js')
 const controllerEndereco = require('./controller/controller_endereco.js')
 const controllerSubcategorias = require('./controller/controller_subcategoria.js')
 const controllerCategorias = require('./controller/controller_categoria.js')
+const controllerUsuarios = require('./controller/controller_usuario.js')
+const controllerFuncionarios = require('./controller/controller_funcionario.js')
+const controllerInteresses = require('./controller/controller_interesse.js')
 const { log } = require('console')
 /******************************************************************************************/
 
