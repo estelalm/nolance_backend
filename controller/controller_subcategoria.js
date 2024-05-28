@@ -5,7 +5,7 @@
  * Versão: 1.0
 ***********************************************************************/
 
-const subcategoriasDAO = require('../model/DAO/subcategorias.js')
+const subcategoriasDAO = require('../model/DAO/subcategoria.js')
 const categoriasDAO = require('../model/DAO/categorias.js')
 const message = require('../module/config.js')
 const categorias = require('../model/DAO/categorias.js')
