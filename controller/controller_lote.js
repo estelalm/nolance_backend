@@ -25,7 +25,7 @@ const getListarLotes = async function () {
         }))
         await Promise.all(dadosLotes.map(async lote =>{
             let subcategoriaLote = await controllerSubcategorias.getBuscarSubcategoriasByLote(lote.id)
-            lote.subcategoria = subcategoriaLote.subcategoria
+            lote.subcategoria = subcategoriaLote.subcategorias
         }))
 
         if (dadosLotes) {
@@ -68,7 +68,7 @@ const getBuscarLote = async function (id) {
             }))
             await Promise.all(dadosLote.map(async lote =>{
                 let subcategoriaLote = await controllerSubcategorias.getBuscarSubcategoriasByLote(lote.id)
-                lote.subcategoria = subcategoriaLote.subcategoria
+                lote.subcategoria = subcategoriaLote.subcategorias
             }))
 
             if (dadosLote) {
@@ -118,10 +118,10 @@ const setInserirLote = async function (dadosBody, contentType) {
                 dadosLote.categoria.forEach(async categoria =>{
                     novaCategoriaLote = await lotesDAO.insertCategoriaLote(categoria, novoLoteId)
                 })
-                let dadosNovaLote = await getBuscarLote(novoLoteId)
+                let dadosNovoLote = await getBuscarLote(novoLoteId)
 
                 if (novoLote) {
-                    novoLoteJSON.lote = dadosNovaLote.lote
+                    novoLoteJSON.lote = dadosNovoLote.lote
                     novoLoteJSON.status_code = message.SUCCESS_CREATED_ITEM.status_code
                     novoLoteJSON.status = message.SUCCESS_CREATED_ITEM.status
                     novoLoteJSON.message = message.SUCCESS_CREATED_ITEM.message
@@ -161,17 +161,31 @@ const setAtualizarLote = async function (id, dadosBody, contentType) {
                 let loteAtualizadaJSON = {}
 
                 if (dadosLote.nome == "" || dadosLote.nome == undefined || dadosLote.nome == null || dadosLote.nome.length > 45 ||
-                    dadosLote.icone == "" || dadosLote.icone == undefined || dadosLote.icone == null || dadosLote.icone.length > 200 ) {
+                dadosLote.data_inicio == "" || dadosLote.data_inicio == undefined || dadosLote.data_inicio == null || dadosLote.data_inicio.length > 10 ||
+                dadosLote.descricao == "" || dadosLote.descricao == undefined || dadosLote.descricao == null || 
+                dadosLote.reserva == "" || dadosLote.reserva == undefined || dadosLote.reserva == null || isNaN(dadosLote.reserva) ||
+                dadosLote.status == "" || dadosLote.status == undefined || dadosLote.status == null || isNaN(dadosLote.status) ||
+                dadosLote.leilao == "" || dadosLote.leilao == undefined || dadosLote.leilao == null || isNaN(dadosLote.leilao)  ) {
 
                     return message.ERROR_REQUIRED_FIELDS
                 } else {
 
+                    //consertar caso não exista nenhuma subcategoria ou esteja adicionando mais do que já tem
+                    let categoriasAntigas = await controllerSubcategorias.getBuscarSubcategoriasByLote(idLote)
+                    let count = 0
+                    let subcategoriaAtualizada
+                    categoriasAntigas.subcategorias.forEach(async categoriaAntiga =>{
+                        subcategoriaAtualizada = await lotesDAO.updateCategoriaLote(dadosLote.categoria[count], categoriaAntiga.id, idLote)
+                        count ++
+                    })
+
                     let loteAtualizada = await lotesDAO.updateLote(dadosBody, idLote)
 
-                    let dadosLote = await getBuscarLote(idLote)
+
+                    // let dadosLoteAtualizado = await getBuscarLote(idLote)
 
                     if (loteAtualizada) {
-                        loteAtualizadaJSON.lote = dadosLote.lote
+                        // loteAtualizadaJSON.lote = dadosLoteAtualizado.lote
                         loteAtualizadaJSON.status_code = message.SUCCESS_UPDATED_ITEM.status_code
                         loteAtualizadaJSON.status = message.SUCCESS_UPDATED_ITEM.status
                         loteAtualizadaJSON.message = message.SUCCESS_UPDATED_ITEM.message
@@ -205,9 +219,10 @@ const setExcluirLote = async function (id) {
         } else {
             let loteExcluidaJSON = {}
 
+            let dadosCategoriaExcluida = await lotesDAO.deleteCategoriaLote(idLote)
             let dadosLoteExcluida = await lotesDAO.deleteLote(idLote)
 
-            if (dadosLoteExcluida) {
+            if (dadosCategoriaExcluida && dadosLoteExcluida) {
                 loteExcluidaJSON.status_code = message.SUCCESS_DELETED_ITEM.status_code
                 loteExcluidaJSON.status = message.SUCCESS_DELETED_ITEM.status
                 loteExcluidaJSON.message = message.SUCCESS_DELETED_ITEM.message
