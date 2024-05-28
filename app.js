@@ -32,6 +32,7 @@ const controllerUsuarios = require('./controller/controller_usuario.js')
 const controllerFuncionarios = require('./controller/controller_funcionario.js')
 const controllerInteresses = require('./controller/controller_interesse.js')
 const controllerComitentes = require('./controller/controller_comitente.js')
+const controllerLeiloes = require('./controller/controller_leilao.js')
 const { log } = require('console')
 /******************************************************************************************/
 
@@ -483,6 +484,15 @@ app.delete('/v1/nolance/comitente/juridico/:id', cors(), async (request, respons
     response.status(dadosComitentes.status_code)
     response.json(dadosComitentes)
 
+})
+
+/**********************************ENDPOINTS : LEILÃO *********************************************/
+
+app.get('/v1/nolance/leiloes', cors(), async function(request, response){
+    let dadosLeiloes = await controllerLeiloes.listLeiloes()
+
+    response.status(dadosLeiloes.status_code)
+    response.json(dadosLeiloes)
 })
 
 app.listen('8080', function(){
