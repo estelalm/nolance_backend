@@ -5,10 +5,9 @@
  * Versão: 1.0
 ***********************************************************************/
 
-const subcategoriasDAO = require('../model/DAO/subcategorias.js')
-const categoriasDAO = require('../model/DAO/categorias.js')
+const subcategoriasDAO = require('../model/DAO/subcategoria.js')
+const categoriasDAO = require('../model/DAO/categoria.js')
 const message = require('../module/config.js')
-const categorias = require('../model/DAO/categorias.js')
 
 const getListarSubcategorias = async function () {
 
@@ -76,6 +75,7 @@ const getBuscarSubcategoria = async function (id) {
             }
         }
     } catch (error) {
+        console.log(error)
         return message.ERROR_INTERNAL_SERVER
     }
 }
@@ -110,16 +110,16 @@ const getBuscarSubcategoriasByCategoria = async function (id){
     }
 }
 const getBuscarSubcategoriasByLote = async function (id){
-    let idCategoria = id
+    let idLote = id
 
     try {
 
-        if (idCategoria == undefined || isNaN(idCategoria) || idCategoria == "") {
+        if (idLote == undefined || isNaN(idLote) || idLote == "") {
             return message.ERROR_INVALID_ID
         } else {
             let subcategoriasJSON = {}
 
-            let dadosSubcategorias = await subcategoriasDAO.selectSubcategoriaByLote(idLOte)
+            let dadosSubcategorias = await subcategoriasDAO.selectSubcategoriaByLote(idLote)
 
             if (dadosSubcategorias) {
                 if (dadosSubcategorias.length > 0) {
@@ -135,6 +135,7 @@ const getBuscarSubcategoriasByLote = async function (id){
             }
         }
     } catch (error) {
+        console.log(error)
         return message.ERROR_INTERNAL_SERVER
     }
 }
