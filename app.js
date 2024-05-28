@@ -358,7 +358,7 @@ app.delete('/v1/nolance/employee/:id', cors(), async (request, response, next) =
 })
 
 
-/**********************************ENDPOINTS : FUNCIONÁRIOS *********************************************/
+/**********************************ENDPOINTS : INTERESSES *********************************************/
 app.get('/v1/nolance/interesses', cors(), async (request, response) => {
     let dadosInteresses = await controllerInteresses.listInteresses()
 
@@ -389,6 +389,7 @@ app.put('/v1/nolance/interesse/:id', cors(), async (request, response) => {
     response.json(resultInteresseDados)
 })
 
+/**********************************ENDPOINTS : COMITENTE *********************************************/
 
 app.get('/v1/nolance/comitentes', cors(), async (request, response, next) =>{
 
