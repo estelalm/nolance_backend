@@ -94,7 +94,7 @@ const setInserirComitenteFisico = async function (dadosBody, contentType) {
                 dadosComitente.telefone == "" || dadosComitente.telefone == undefined || dadosComitente.telefone == null ||
                 dadosComitente.email == "" || dadosComitente.email == undefined || dadosComitente.email == null ||
                 dadosComitente.rg == "" || dadosComitente.rg == undefined || dadosComitente.rg == null ||
-                dadosComitente.cpf == "" || dadosComitente.cpf == undefined || dadosComitente.cpf == null || dadosComitente.nome.length > 11) {
+                dadosComitente.cpf == "" || dadosComitente.cpf == undefined || dadosComitente.cpf == null || dadosComitente.cpf.length > 11) {
                 return message.ERROR_REQUIRED_FIELDS
             } else {
 
@@ -103,7 +103,7 @@ const setInserirComitenteFisico = async function (dadosBody, contentType) {
                 let novoComitenteFisico = await comitentesDAO.insertComitenteFisico(dadosBody, novoComitenteId)
                 let dadosNovaComitente = await getBuscarComitente(novoComitenteId)
 
-                console.log(novoComitenteFisico)
+                
 
                 if (novoComitente, novoComitenteFisico) {
                     novoComitenteJSON.comitente = dadosNovaComitente.comitente
@@ -134,23 +134,25 @@ const setInserirComitenteJuridico = async function (dadosBody, contentType) {
     let dadosComitente = dadosBody
 
     try {
-
+        
         if (String(contentType).toLowerCase() == 'application/json') {
 
             let novoComitenteJSON = {}
 
-            if (dadosComitente.nome == "" || dadosComitente.nome == undefined || dadosComitente.nome == null || dadosComitente.nome.length > 45 ||
-                dadosComitente.telefone == "" || dadosComitente.telefone == undefined || dadosComitente.telefone == null ||
-                dadosComitente.email == "" || dadosComitente.email == undefined || dadosComitente.email == null ||
-                dadosComitente.cnpj == "" || dadosComitente.cnpj == undefined || dadosComitente.cnpj == null || dadosComitente.cnpj.length > 15 ||
-                dadosComitente.razao_social == "" || dadosComitente.razao_social == undefined || dadosComitente.razao_social == null || dadosComitente.razao_social.length > 50 ||
-                dadosComitente.descricao == "" || dadosComitente.descricao == undefined || dadosComitente.descricao == null) {
+            if (dadosComitente.nome == "" || dadosComitente.nome == undefined || dadosComitente.nome == null || dadosComitente.nome.length > 45||
+            dadosComitente.telefone == "" || dadosComitente.telefone == undefined || dadosComitente.telefone == null ||
+            dadosComitente.email == "" || dadosComitente.email == undefined || dadosComitente.email == null ||
+            dadosComitente.cnpj == "" || dadosComitente.cnpj == undefined || dadosComitente.cnpj == null || dadosComitente.cnpj.length > 15 ||
+            dadosComitente.razao_social == "" || dadosComitente.razao_social == undefined || dadosComitente.razao_social == null || dadosComitente.razao_social.length > 50 ||
+            dadosComitente.descricao == "" || dadosComitente.descricao == undefined || dadosComitente.descricao == null
+             ) {
+                
                 return message.ERROR_REQUIRED_FIELDS
             } else {
 
-                let novoComitente = await comitentesDAO.insertComitente(dadosBody)
+                let novoComitente = await comitentesDAO.insertComitente(dadosComitente)
                 let novoComitenteId = await comitentesDAO.selectLastInsertId()
-                let novoComitenteJuridico = await comitentesDAO.insertComitenteFisico(novoComitenteId)
+                let novoComitenteJuridico = await comitentesDAO.insertComitenteJuridico(dadosComitente, novoComitenteId)
                 let dadosNovaComitente = await getBuscarComitente(novoComitenteId)
 
                 if (novoComitente, novoComitenteJuridico) {
@@ -178,7 +180,7 @@ const setInserirComitenteJuridico = async function (dadosBody, contentType) {
 }
 
 
-const setAtualizarComitente = async function (id, dadosBody, contentType) {
+const setAtualizarComitenteFisico = async function (id, dadosBody, contentType) {
 
     let dadosComitente = dadosBody
     let idComitente = id
@@ -191,24 +193,29 @@ const setAtualizarComitente = async function (id, dadosBody, contentType) {
                 return message.ERROR_INVALID_ID
             } else {
 
-                let comitenteAtualizadaJSON = {}
+                let comitenteAtualizadoJSON = {}
 
                 if (dadosComitente.nome == "" || dadosComitente.nome == undefined || dadosComitente.nome == null || dadosComitente.nome.length > 45 ||
-                    dadosComitente.telefone == "" || dadosComitente.telefone == undefined || dadosComitente.telefone == null || isNaN(dadosComitente.telefone)) {
+                    dadosComitente.telefone == "" || dadosComitente.telefone == undefined || dadosComitente.telefone == null ||
+                    dadosComitente.email == "" || dadosComitente.email == undefined || dadosComitente.email == null ||
+                    dadosComitente.rg == "" || dadosComitente.rg == undefined || dadosComitente.rg == null ||
+                    dadosComitente.cpf == "" || dadosComitente.cpf == undefined || dadosComitente.cpf == null
+                ) {
                     return message.ERROR_REQUIRED_FIELDS
                 } else {
 
-                    let comitenteAtualizada = await comitentesDAO.updateComitente(dadosBody, idComitente)
+                    let comitenteAtualizado = await comitentesDAO.updateComitente(dadosBody, idComitente)
+                    let comitenteFisicoAtualizado = await comitentesDAO.updateComitenteFisico(dadosBody, idComitente)
 
                     let dadosComitente = await getBuscarComitente(idComitente)
 
-                    if (comitenteAtualizada) {
-                        comitenteAtualizadaJSON.comitente = dadosComitente.comitente
-                        comitenteAtualizadaJSON.status_code = message.SUCCESS_CREATED_ITEM.status_code
-                        comitenteAtualizadaJSON.status = message.SUCCESS_CREATED_ITEM.status
-                        comitenteAtualizadaJSON.message = message.SUCCESS_CREATED_ITEM.message
+                    if (comitenteAtualizado && comitenteFisicoAtualizado) {
+                        comitenteAtualizadoJSON.comitente = dadosComitente.comitente
+                        comitenteAtualizadoJSON.status_code = message.SUCCESS_CREATED_ITEM.status_code
+                        comitenteAtualizadoJSON.status = message.SUCCESS_CREATED_ITEM.status
+                        comitenteAtualizadoJSON.message = message.SUCCESS_CREATED_ITEM.message
 
-                        return comitenteAtualizadaJSON
+                        return comitenteAtualizadoJSON
 
                     } else {
                         return message.ERROR_INTERNAL_SERVER_DB
@@ -226,7 +233,61 @@ const setAtualizarComitente = async function (id, dadosBody, contentType) {
 
 }
 
-const setExcluirComitente = async function (id) {
+const setAtualizarComitenteJuridico = async function (id, dadosBody, contentType) {
+
+    let dadosComitente = dadosBody
+    let idComitente = id
+    
+    try {
+
+        if (String(contentType).toLowerCase() == 'application/json') {
+
+            if (idComitente == undefined || isNaN(idComitente) || idComitente == "") {
+                return message.ERROR_INVALID_ID
+            } else {
+
+                let comitenteAtualizadoJSON = {}
+
+                if (dadosComitente.nome == "" || dadosComitente.nome == undefined || dadosComitente.nome == null || dadosComitente.nome.length > 45 ||
+                    dadosComitente.telefone == "" || dadosComitente.telefone == undefined || dadosComitente.telefone == null ||
+                    dadosComitente.email == "" || dadosComitente.email == undefined || dadosComitente.email == null ||
+                    dadosComitente.cnpj == "" || dadosComitente.cnpj == undefined || dadosComitente.cnpj == null ||
+                    dadosComitente.razao_social == "" || dadosComitente.razao_social == undefined || dadosComitente.razao_social == null ||
+                    dadosComitente.descricao == "" || dadosComitente.descricao == undefined || dadosComitente.descricao == null
+                ) {
+                    return message.ERROR_REQUIRED_FIELDS
+                } else {
+
+                    let comitenteAtualizado = await comitentesDAO.updateComitente(dadosBody, idComitente)
+                    let comitenteFisicoAtualizado = await comitentesDAO.updateComitenteJuridico(dadosBody, idComitente)
+
+                    let dadosComitente = await getBuscarComitente(idComitente)
+
+                    if (comitenteAtualizado && comitenteFisicoAtualizado) {
+                        comitenteAtualizadoJSON.comitente = dadosComitente.comitente
+                        comitenteAtualizadoJSON.status_code = message.SUCCESS_CREATED_ITEM.status_code
+                        comitenteAtualizadoJSON.status = message.SUCCESS_CREATED_ITEM.status
+                        comitenteAtualizadoJSON.message = message.SUCCESS_CREATED_ITEM.message
+
+                        return comitenteAtualizadoJSON
+
+                    } else {
+                        return message.ERROR_INTERNAL_SERVER_DB
+                    }
+                }
+            }
+        } else {
+            return message.ERROR_CONTENT_TYPE
+        }
+
+    } catch (error) {
+        console.log(error)
+        return message.ERROR_INTERNAL_SERVER
+    }
+
+}
+
+const setExcluirComitenteFisico = async function (id) {
 
     let idComitente = id
 
@@ -235,16 +296,55 @@ const setExcluirComitente = async function (id) {
         if (idComitente == undefined || isNaN(idComitente) || idComitente == "") {
             return message.ERROR_INVALID_ID
         } else {
-            let comitenteExcluidaJSON = {}
+            let comitenteExcluidoJSON = {}
 
-            let dadosComitenteExcluida = await comitentesDAO.deleteComitente(idComitente)
+            let dadosComitenteExcluido
+            let dadosComitenteFisicoExcluido = await comitentesDAO.deleteComitenteFisico(idComitente)
+            
+                dadosComitenteExcluido = await comitentesDAO.deleteComitente(idComitente)
+            
+            
 
-            if (dadosComitenteExcluida) {
-                comitenteExcluidaJSON.status_code = message.SUCCESS_DELETED_ITEM.status_code
-                comitenteExcluidaJSON.status = message.SUCCESS_DELETED_ITEM.status
-                comitenteExcluidaJSON.message = message.SUCCESS_DELETED_ITEM.message
 
-                    return comitenteExcluidaJSON
+            if (dadosComitenteExcluido && dadosComitenteFisicoExcluido) {
+                comitenteExcluidoJSON.status_code = message.SUCCESS_DELETED_ITEM.status_code
+                comitenteExcluidoJSON.status = message.SUCCESS_DELETED_ITEM.status
+                comitenteExcluidoJSON.message = message.SUCCESS_DELETED_ITEM.message
+
+                    return comitenteExcluidoJSON
+            } else {
+                return message.ERROR_INTERNAL_SERVER_DB
+            }
+        }
+    } catch (error) {
+
+        return message.ERROR_INTERNAL_SERVER
+    }
+}
+
+const setExcluirComitenteJuridico = async function (id) {
+
+    let idComitente = id
+
+    try {
+
+        if (idComitente == undefined || isNaN(idComitente) || idComitente == "") {
+            return message.ERROR_INVALID_ID
+        } else {
+            let comitenteExcluidoJSON = {}
+
+            let dadosComitenteExcluido
+            let dadosComitenteJuridicoExcluido = await comitentesDAO.deleteComitenteJuridico(idComitente)
+            if(dadosComitenteJuridicoExcluido){
+             await comitentesDAO.deleteComitente(idComitente)
+            }
+
+            if ( dadosComitenteJuridicoExcluido) {
+                comitenteExcluidoJSON.status_code = message.SUCCESS_DELETED_ITEM.status_code
+                comitenteExcluidoJSON.status = message.SUCCESS_DELETED_ITEM.status
+                comitenteExcluidoJSON.message = message.SUCCESS_DELETED_ITEM.message
+
+                    return comitenteExcluidoJSON
             } else {
                 return message.ERROR_INTERNAL_SERVER_DB
             }
@@ -260,6 +360,8 @@ module.exports = {
     getBuscarComitente,
     setInserirComitenteFisico,
     setInserirComitenteJuridico,
-    setAtualizarComitente,
-    setExcluirComitente
+    setAtualizarComitenteFisico,
+    setAtualizarComitenteJuridico,
+    setExcluirComitenteFisico,
+    setExcluirComitenteJuridico
 }
