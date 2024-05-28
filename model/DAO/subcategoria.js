@@ -57,6 +57,25 @@ const selectSubcategoriaByCategoria = async function(id) {
     }
 }
 
+const selectSubcategoriaByLote = async function(id) {
+
+    let idLote = id
+
+    try{
+        let sql = `select tbl_subcategoria.id, tbl_subcategoria.nome from tbl_subcategoria 
+        inner join tbl_categoria_lote on tbl_subcategoria.id=tbl_categoria_lote.subcategoria_id
+        inner join tbl_lote on tbl_categoria_lote.lote_id=tbl_lote.id
+         where tbl_lote.id = ${idLote}`
+
+        let rsSubcategoria = await prisma.$queryRawUnsafe(sql)
+
+        return rsSubcategoria
+    }catch(error){
+        console.log(error)
+        return false
+    }
+}
+
 const insertSubcategoria = async function(dados) {
 
     let dadosCategoria = dados
@@ -138,6 +157,7 @@ module.exports = {
     selectAllSubcategorias,
     selectSubcategoriaById,
     selectSubcategoriaByCategoria,
+    selectSubcategoriaByLote,
     insertSubcategoria,
     updateSubcategoria,
     deleteSubcategoria,
