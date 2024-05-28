@@ -597,6 +597,100 @@ app.delete('/v1/nolance/lote/:id', cors(), async (request, response, next) =>{
 
 })
 
+
+/**********************************ENDPOINTS : LANCE *********************************************/
+
+app.get('/v1/nolance/lances', cors(), async (request, response, next) =>{
+
+    let dadosLances = await controllerLances.getListarLances()
+
+    response.status(dadosLances.status_code)
+    response.json(dadosLances)
+
+    next()
+
+})
+
+app.get('/v1/nolance/lance/:id', cors(), async (request, response, next) =>{
+
+    let idLance = request.params.id
+
+    let dadosLances = await controllerLances.getBuscarLance(idLance)
+
+    response.status(dadosLances.status_code)
+    response.json(dadosLances)
+
+    next()
+
+})
+app.get('/v1/nolance/lance/arrematante/lote/:id', cors(), async (request, response, next) =>{
+
+    let idLote = request.params.id
+
+    let dadosLances = await controllerLances.getBuscarArrematante(idLote)
+
+    response.status(dadosLances.status_code)
+    response.json(dadosLances)
+
+    next()
+
+})
+
+app.get('/v1/nolance/lances/filtro', cors(), async (request, response, next) =>{
+
+    let params = request.query
+
+    let dadosLances = await controllerLances.getFiltrarLance(params)
+
+    response.status(dadosLances.status_code)
+    response.json(dadosLances)
+
+    next()
+
+})
+
+
+
+app.post('/v1/nolance/lance', cors(), bodyParserJSON, async (request, response, next) =>{
+
+    let contentType = request.header('content-type')
+    let dadosBody = request.body
+   
+
+    let resultDadosLance = await controllerLances.setInserirLance(dadosBody, contentType)
+
+    response.status(resultDadosLance.status_code)
+    response.json(resultDadosLance)
+
+})
+
+app.put('/v1/nolance/lance/:id', cors(), bodyParserJSON, async (request, response, next) =>{
+
+    let idLance = request.params.id
+
+    let contentType = request.header('content-type')
+    let dadosBody = request.body
+   
+
+    let resultDadosLance = await controllerLances.setAtualizarLance(idLance, dadosBody, contentType)
+
+    response.status(resultDadosLance.status_code)
+    response.json(resultDadosLance)
+
+})
+
+app.delete('/v1/nolance/lance/:id', cors(), async (request, response, next) =>{
+
+    let idLance = request.params.id
+
+    let dadosLances = await controllerLances.setExcluirLance(idLance)
+
+    response.status(dadosLances.status_code)
+    response.json(dadosLances)
+
+
+})
+
 app.listen('8080', function(){
     console.log('API funcionando!')
 })
