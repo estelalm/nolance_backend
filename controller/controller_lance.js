@@ -88,6 +88,50 @@ const getBuscarLance = async function (id) {
     }
 }
 
+const getArrematesUsuario = async function (id){
+    try {
+
+        if (id == undefined || isNaN(id) || id == "") {
+            return message.ERROR_INVALID_ID
+        } else {
+            let lanceJSON = {}
+
+            let dadosLotesUsuario = await lancesDAO.selectLancesUsuario(id)
+
+            let lancesArray = []
+            await Promise.all(dadosLotesUsuario.map(async lote =>{
+                let dadosLance = await lancesDAO.selectArrematante(lote.id)
+                lancesArray.push(dadosLance)
+            }))
+            
+            await Promise.all(lancesArray.map(async lance =>{
+                let lanceLote = await controllerLote.getBuscarLote(lance.lote)
+                lance.lote = lanceLote.lote
+            }))
+            await Promise.all(lancesArray.map(async lance =>{
+                let usuarioLance = await usuarioDAO.selectByIdUser(lance.usuario)
+                lance.usuario = usuarioLance
+            }))
+
+            if (lancesArray) {
+                if (lancesArray.length > 0) {
+                    lanceJSON.lance = lancesArray
+                    lanceJSON.status_code = 200
+
+                    return lanceJSON
+                } else {
+                    return message.ERROR_NOT_FOUND
+                }
+            } else {
+                return message.ERROR_INTERNAL_SERVER_DB
+            }
+        }
+    } catch (error) {
+        console.log(error)
+        return message.ERROR_INTERNAL_SERVER
+    }
+}
+
 const getBuscarArrematante = async function (id) {
 
     let idLote = id
@@ -301,6 +345,7 @@ module.exports = {
     getListarLances,
     getBuscarLance,
     getBuscarArrematante,
+    getArrematesUsuario,
     getFiltrarLance,
     setInserirLance,
     setAtualizarLance,
