@@ -5,10 +5,10 @@
  * Versão: 1.0
 ***********************************************************************/
 
-const subcategoriasDAO = require('../model/DAO/subcategoria.js')
+const subcategoriasDAO = require('../model/DAO/subcategorias.js')
 const categoriasDAO = require('../model/DAO/categorias.js')
 const message = require('../module/config.js')
-const categorias = require('../model/DAO/categoria.js')
+const categorias = require('../model/DAO/categorias.js')
 
 const getListarSubcategorias = async function () {
 
@@ -97,7 +97,36 @@ const getBuscarSubcategoriasByCategoria = async function (id){
                     subcategoriasJSON.subcategorias = dadosSubcategorias
                     subcategoriasJSON.status_code = 200
 
-                    return subcategoriaJSON
+                    return subcategoriasJSON
+                } else {
+                    return message.ERROR_NOT_FOUND
+                }
+            } else {
+                return message.ERROR_INTERNAL_SERVER_DB
+            }
+        }
+    } catch (error) {
+        return message.ERROR_INTERNAL_SERVER
+    }
+}
+const getBuscarSubcategoriasByLote = async function (id){
+    let idCategoria = id
+
+    try {
+
+        if (idCategoria == undefined || isNaN(idCategoria) || idCategoria == "") {
+            return message.ERROR_INVALID_ID
+        } else {
+            let subcategoriasJSON = {}
+
+            let dadosSubcategorias = await subcategoriasDAO.selectSubcategoriaByLote(idLOte)
+
+            if (dadosSubcategorias) {
+                if (dadosSubcategorias.length > 0) {
+                    subcategoriasJSON.subcategorias = dadosSubcategorias
+                    subcategoriasJSON.status_code = 200
+
+                    return subcategoriasJSON
                 } else {
                     return message.ERROR_NOT_FOUND
                 }
@@ -234,6 +263,7 @@ const setExcluirSubcategoria = async function (id) {
 module.exports = {
     getListarSubcategorias,
     getBuscarSubcategoria,
+    getBuscarSubcategoriasByLote,
     setInserirSubcategoria,
     setAtualizarSubcategoria,
     setExcluirSubcategoria,
