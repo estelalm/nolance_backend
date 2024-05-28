@@ -624,11 +624,23 @@ app.get('/v1/nolance/lance/:id', cors(), async (request, response, next) =>{
     next()
 
 })
-app.get('/v1/nolance/lance/arrematante/lote/:id', cors(), async (request, response, next) =>{
+app.get('/v1/nolance/lance/arremate/lote/:id', cors(), async (request, response, next) =>{
 
     let idLote = request.params.id
 
     let dadosLances = await controllerLances.getBuscarArrematante(idLote)
+
+    response.status(dadosLances.status_code)
+    response.json(dadosLances)
+
+    next()
+
+})
+app.get('/v1/nolance/lance/arremate/usuario/:id', cors(), async (request, response, next) =>{
+
+    let idUsuario = request.params.id
+
+    let dadosLances = await controllerLances.getArrematesUsuario(idUsuario)
 
     response.status(dadosLances.status_code)
     response.json(dadosLances)
