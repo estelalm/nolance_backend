@@ -33,6 +33,7 @@ const controllerFuncionarios = require('./controller/controller_funcionario.js')
 const controllerInteresses = require('./controller/controller_interesse.js')
 const controllerComitentes = require('./controller/controller_comitente.js')
 const controllerLeiloes = require('./controller/controller_leilao.js')
+const controllerLotes = require('./controller/controller_lote')
 const { log } = require('console')
 /******************************************************************************************/
 
@@ -493,6 +494,73 @@ app.get('/v1/nolance/leiloes', cors(), async function(request, response){
 
     response.status(dadosLeiloes.status_code)
     response.json(dadosLeiloes)
+})
+
+/**********************************ENDPOINTS : LOTE *********************************************/
+
+app.get('/v1/nolance/lotes', cors(), async (request, response, next) =>{
+
+    let dadosLotes = await controllerLotes.getListarLotes()
+
+    response.status(dadosLotes.status_code)
+    response.json(dadosLotes)
+
+    next()
+
+})
+
+app.get('/v1/nolance/lote/:id', cors(), async (request, response, next) =>{
+
+    let idLote = request.params.id
+
+    let dadosLotes = await controllerLotes.getBuscarLote(idLote)
+
+    response.status(dadosLotes.status_code)
+    response.json(dadosLotes)
+
+    next()
+
+})
+
+
+app.post('/v1/nolance/lote', cors(), bodyParserJSON, async (request, response, next) =>{
+
+    let contentType = request.header('content-type')
+    let dadosBody = request.body
+   
+
+    let resultDadosLote = await controllerLotes.setInserirLote(dadosBody, contentType)
+
+    response.status(resultDadosLote.status_code)
+    response.json(resultDadosLote)
+
+})
+
+app.put('/v1/nolance/lote/:id', cors(), bodyParserJSON, async (request, response, next) =>{
+
+    let idLote = request.params.id
+
+    let contentType = request.header('content-type')
+    let dadosBody = request.body
+   
+
+    let resultDadosLote = await controllerLotes.setAtualizarLote(idLote, dadosBody, contentType)
+
+    response.status(resultDadosLote.status_code)
+    response.json(resultDadosLote)
+
+})
+
+app.delete('/v1/nolance/lote/:id', cors(), async (request, response, next) =>{
+
+    let idLote = request.params.id
+
+    let dadosLotes = await controllerLotes.setExcluirLote(idLote)
+
+    response.status(dadosLotes.status_code)
+    response.json(dadosLotes)
+
+
 })
 
 app.listen('8080', function(){
