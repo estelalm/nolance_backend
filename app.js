@@ -390,7 +390,6 @@ app.put('/v1/nolance/interesse/:id', cors(), async (request, response) => {
 })
 
 
-//Endpoints: comitentes
 app.get('/v1/nolance/comitentes', cors(), async (request, response, next) =>{
 
     let dadosComitentes = await controllerComitentes.getListarComitentes()
@@ -434,7 +433,7 @@ app.post('/v1/nolance/comitente/juridico', cors(), bodyParserJSON, async (reques
 })
 
 
-app.put('/v1/nolance/comitente/:id', cors(), bodyParserJSON, async (request, response, next) =>{
+app.put('/v1/nolance/comitente/fisico/:id', cors(), bodyParserJSON, async (request, response, next) =>{
 
     let idComitente = request.params.id
 
@@ -442,18 +441,43 @@ app.put('/v1/nolance/comitente/:id', cors(), bodyParserJSON, async (request, res
     let dadosBody = request.body
    
 
-    let resultDadosComitente = await controllerComitentes.setAtualizarComitente(idComitente, dadosBody, contentType)
+    let resultDadosComitente = await controllerComitentes.setAtualizarComitenteFisico(idComitente, dadosBody, contentType)
 
     response.status(resultDadosComitente.status_code)
     response.json(resultDadosComitente)
 
 })
 
-app.delete('/v1/nolance/comitente/:id', cors(), async (request, response, next) =>{
+app.put('/v1/nolance/comitente/juridico/:id', cors(), bodyParserJSON, async (request, response, next) =>{
+
+    let idComitente = request.params.id
+
+    let contentType = request.header('content-type')
+    let dadosBody = request.body
+   
+
+    let resultDadosComitente = await controllerComitentes.setAtualizarComitenteJuridico(idComitente, dadosBody, contentType)
+
+    response.status(resultDadosComitente.status_code)
+    response.json(resultDadosComitente)
+
+})
+
+app.delete('/v1/nolance/comitente/fisico/:id', cors(), async (request, response, next) =>{
 
     let idComitente= request.params.id
 
-    let dadosComitentes = await controllerComitentes.setExcluirComitente(idComitente)
+    let dadosComitentes = await controllerComitentes.setExcluirComitenteFisico(idComitente)
+
+    response.status(dadosComitentes.status_code)
+    response.json(dadosComitentes)
+
+})
+app.delete('/v1/nolance/comitente/juridico/:id', cors(), async (request, response, next) =>{
+
+    let idComitente= request.params.id
+
+    let dadosComitentes = await controllerComitentes.setExcluirComitenteJuridico(idComitente)
 
     response.status(dadosComitentes.status_code)
     response.json(dadosComitentes)
