@@ -6,7 +6,7 @@
 ***********************************************************************/
 
 const message = require('../module/config.js')
-const comitentesDAO = require('../model/DAO/comitentes.js')
+const comitentesDAO = require('../model/DAO/comitente.js')
 
 const getListarComitentes = async function () {
 
