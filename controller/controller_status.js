@@ -22,6 +22,31 @@ const getListarStatus = async () => {
     }
 }
 
+const getListarStatusById = async (id) => {
+
+    if (id == undefined || isNaN(id) || id == "") {
+        return message.ERROR_INVALID_ID
+    }else {
+    let statusJSON = {}
+
+    let dadosStatus = await statusDAO.selectByIdStatus(id)
+
+    if(dadosStatus){
+        if(dadosStatus.length > 0){
+            statusJSON.status = dadosStatus
+            statusJSON.quantidade = dadosStatus.length
+            statusJSON.status_code = 200;
+
+            return statusJSON
+        } else {
+            return message.ERROR_NOT_FOUND
+        }
+    } else {
+        return message.ERROR_INTERNAL_SERVER_DB
+    }
+}
+}
+
 const atualizarStatus = async (dados, id , contentType) => {
     try {
         if(String(contentType).toLowerCase() == 'application/json'){
@@ -82,6 +107,7 @@ const deletarStatus = async (id) => {
 
 module.exports = {
     getListarStatus,
+    getListarStatusById,
     atualizarStatus,
     deletarStatus
 }
