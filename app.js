@@ -496,6 +496,40 @@ app.get('/v1/nolance/leiloes', cors(), async function(request, response){
     response.json(dadosLeiloes)
 })
 
+
+app.post('/v1/nolance/leiloes', cors(), async function(request, response){
+    let contentType = request.header('content-type')
+    let dados = request.body
+   
+    let resultDadosLeilao = await controllerLeiloes.addLeilao(dados, contentType)
+
+    response.status(resultDadosLeilao.status_code)
+    response.json(resultDadosLeilao)
+})
+
+app.put('/v1/nolance/leilao/:id', cors(), async function(request, response) {
+
+    let idLeilao = request.params.id
+
+    let dados = request.body
+    let contentType = request.header('content-type')
+
+    let resultLeilao = await controllerLeiloes.updateLeilao(dados, contentType, idLeilao)
+
+    response.status(resultLeilao.status_code)
+    response.json(resultLeilao)
+})
+
+app.delete('/v1/nolance/leilao/:id', cors(), async function(request, response) {
+    let idLeilao = request.params.id
+
+    let resultLeilao = await controllerLeiloes.deleteLeilao(idLeilao)
+
+    response.status(resultLeilao.status_code)
+    response.json(resultLeilao)
+})
+
+
 /**********************************ENDPOINTS : LOTE *********************************************/
 
 app.get('/v1/nolance/lotes', cors(), async (request, response, next) =>{
