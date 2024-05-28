@@ -704,6 +704,16 @@ app.delete('/v1/nolance/lance/:id', cors(), async (request, response, next) =>{
 
 })
 
+/**********************************ENDPOINTS : PAGAMENTOS *********************************************/
+
+app.get('/v1/nolance/pagamentos', cors(), async function(request, response) {
+    let paymentsData = await controllerPagamentos.listAllPayments()
+
+    response.status(paymentsData.status_code)
+    response.json(paymentsData)
+})
+
+
 app.listen('8080', function(){
     console.log('API funcionando!')
 })
