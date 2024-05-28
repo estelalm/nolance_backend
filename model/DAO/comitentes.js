@@ -15,7 +15,7 @@ const prisma = new PrismaClient
 const selectAllComitentesFisicos = async function() {
 
     try{
-        let sql = `select * from tbl_comitente join tbl_pessoa_fisica on tbl_comitente.id=tbl_pessoa_fisica.comitente_id; `
+        let sql = `select tbl_comitente.id, nome, telefone, email, cpf, rg from tbl_comitente join tbl_pessoa_fisica on tbl_comitente.id=tbl_pessoa_fisica.comitente_id; `
 
         let rsComitentes = await prisma.$queryRawUnsafe(sql)
 
@@ -29,7 +29,7 @@ const selectAllComitentesFisicos = async function() {
 const selectAllComitentesJuridicos = async function() {
 
     try{
-        let sql = `select * from tbl_comitente join tbl_pessoa_juridica on tbl_comitente.id=tbl_pessoa_juridica.comitente_id`
+        let sql = `select tbl_comitente.id, nome, telefone, email, cnpj, razao_social, descricao from tbl_comitente join tbl_pessoa_juridica on tbl_comitente.id=tbl_pessoa_juridica.comitente_id`
 
         let rsComitentes = await prisma.$queryRawUnsafe(sql)
 
@@ -40,27 +40,6 @@ const selectAllComitentesJuridicos = async function() {
         return false
     }
 }
-
-
-// const selectComitenteById2 = async function(id, tipo) {
-
-//     let idComitente = id
-
-//     try{
-//         let sql 
-//         if(tipo == "fisico"){
-//             sql = `select * from tbl_comitente join tbl_pessoa_fisica on tbl_comitente.id=tbl_pessoa_fisica.comitente_id where id = ${idComitente}`
-//         }else{ 
-//             sql = `select * from tbl_comitente join tbl_pessoa_juridica on tbl_comitente.id=tbl_pessoa_juridica.comitente_id where id = ${idComitente}`
-//         }
-//         let rsComitente = await prisma.$queryRawUnsafe(sql)
-
-//         return rsComitente
-//     }catch(error){
-//         return false
-//     }
-// }
-
 
 const selectComitenteById = async function(id) {
 
@@ -75,7 +54,7 @@ const selectComitenteById = async function(id) {
                             join tbl_pessoa_juridica on tbl_comitente.id=tbl_pessoa_juridica.comitente_id where tbl_comitente.id in(select comitente_id from tbl_pessoa_juridica) and tbl_comitente.id = ${idComitente} 
         `
         let rsComitenteJuridico = await prisma.$queryRawUnsafe(sqlJuridico)
-        console.log(rsComitenteFisico, rsComitenteJuridico)
+        
 
         if(rsComitenteFisico.length > 0){
             return rsComitenteFisico
@@ -111,10 +90,10 @@ const insertComitenteJuridico = async function(dados, id) {
     let dadosComitente = dados
 
     try{
-        let sql = `insert into tbl_comitente(cnpj, razao_social, descricao, comitente_id) values 
+        let sql = `insert into tbl_pessoa_juridica(cnpj, razao_social, descricao, comitente_id) values 
                     ('${dadosComitente.cnpj}', '${dadosComitente.razao_social}', '${dadosComitente.descricao}', ${id});`
 
-                    console.log(sql)
+                
         let rsComitente = await prisma.$executeRawUnsafe(sql)
 
         return rsComitente
@@ -141,15 +120,16 @@ const insertComitenteFisico = async function(dados, id) {
 }
 
 
-const updateComitente = async function(dadosSubComitente, idComitente) {
+const updateComitente = async function(dadosComitente, idComitente) {
 
-    let dados = dadosSubComitente
+    let dados = dadosComitente
     let id = idComitente
 
     try{
         let sql = `update tbl_comitente set
                   nome =  '${dados.nome}',
-                  icone = '${dados.icone}'
+                  telefone = '${dados.telefone}',
+                  email = '${dados.email}'
                   where id = ${id}`
 
         let rsComitente = await prisma.$executeRawUnsafe(sql)
@@ -160,13 +140,79 @@ const updateComitente = async function(dadosSubComitente, idComitente) {
         return false
     }
 }
+const updateComitenteJuridico = async function(dadosComitente, idComitente) {
 
-const deleteComitente = async function(idSubComitente) {
-
-    let id = idSubComitente
+    let dados = dadosComitente
+    let id = idComitente
 
     try{
+        let sql = `update tbl_pessoa_juridica set
+                  cnpj =  '${dados.cnpj}',
+                  razao_social = '${dados.razao_social}',
+                  descricao = '${dados.descricao}'
+                  where comitente_id=${id} `
+
+        let rsComitente = await prisma.$executeRawUnsafe(sql)
+
+        return rsComitente
+    }catch(error){
+        console.log(error)
+        return false
+    }
+}
+const updateComitenteFisico = async function(dadosComitente, idComitente) {
+
+    let dados = dadosComitente
+    let id = idComitente
+
+    try{
+        let sql = `update tbl_pessoa_fisica set
+                  cpf =  '${dados.cpf}',
+                  rg = '${dados.rg}'
+                  where comitente_id = ${id}`
+
+        let rsComitente = await prisma.$executeRawUnsafe(sql)
+        console.log(rsComitente)
+        return rsComitente
+    }catch(error){
+        console.log(error)
+        return false
+    }
+}
+
+const deleteComitente = async function(idComitente) {
+
+    let id = idComitente
+    try{
         let sql = `delete from tbl_comitente where id = ${id}`
+        
+        let rsComitente = await prisma.$executeRawUnsafe(sql)
+
+        return rsComitente
+    }catch(error){
+        console.log(error)
+        return false
+    }
+}
+const deleteComitenteFisico = async function(idComitente) {
+
+    let id = idComitente
+    try{
+        let sql = `delete from tbl_pessoa_fisica where comitente_id = ${id}`
+        
+        let rsComitente = await prisma.$executeRawUnsafe(sql)
+
+        return rsComitente
+    }catch(error){
+        console.log(error)
+        return false
+    }
+}
+const deleteComitenteJuridico = async function(idComitente) {
+
+    let id = idComitente
+    try{
+        let sql = `delete from tbl_pessoa_juridica where comitente_id = ${id}`
         
         let rsComitente = await prisma.$executeRawUnsafe(sql)
 
@@ -210,6 +256,10 @@ module.exports = {
     insertComitenteFisico,
     insertComitenteJuridico,
     updateComitente,
+    updateComitenteFisico,
+    updateComitenteJuridico,
     deleteComitente,
+    deleteComitenteFisico,
+    deleteComitenteJuridico,
     selectLastInsertId
 }
