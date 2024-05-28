@@ -5,8 +5,8 @@
  * Versão: 1.0
 ***********************************************************************/
 
-const categoriasDAO = require('../model/DAO/categorias.js')
-const subcategoriasDAO = require('../model/DAO/subcategorias.js')
+const categoriasDAO = require('../model/DAO/categoria.js')
+const subcategoriasDAO = require('../model/DAO/subcategoria.js')
 const message = require('../module/config.js')
 
 const getListarCategorias = async function () {
