@@ -34,6 +34,7 @@ const controllerInteresses = require('./controller/controller_interesse.js')
 const controllerComitentes = require('./controller/controller_comitente.js')
 const controllerLeiloes = require('./controller/controller_leilao.js')
 const controllerLotes = require('./controller/controller_lote')
+const controllerLances = require('./controller/controller_lance.js')
 const { log } = require('console')
 /******************************************************************************************/
 
