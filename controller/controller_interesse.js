@@ -1,4 +1,4 @@
-const categoriasDAO = require('../model/DAO/categorias.js')
+const categoriasDAO = require('../model/DAO/categoria.js')
 const usuariosDAO = require('../model/DAO/status.js')
 const interesseDAO = require('../model/DAO/interesse.js')
 const message = require('../module/config.js')
