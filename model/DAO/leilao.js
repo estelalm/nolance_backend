@@ -1,4 +1,5 @@
 const { PrismaClient } = require("@prisma/client");
+const { selectLanceByFiltro } = require("./lance");
 const prisma = new PrismaClient()
 
 const selectAllLeiloes = async () => {
@@ -36,6 +37,31 @@ const selectLastId = async () => {
     
         return rsLeilao;
     } catch (error) {
+        return false
+    }
+}
+
+const selectLeilaoByFiltro = async function(params) {
+
+    try{
+
+        let keys = Object.keys(params)
+       
+        let condition
+        keys.forEach(async key => {
+            if (condition) {
+                condition += ` and ${key} like "%${params[key]}%"`
+            } else {
+                condition = `${key} like "%${params[key]}%"`
+            }
+        })
+        let sql = `select * from tbl_leilao where ${condition}`
+        console.log(sql)
+
+        let rsLeilao = await prisma.$queryRawUnsafe(sql)
+
+        return rsLeilao
+    }catch(error){
         return false
     }
 }
@@ -96,5 +122,6 @@ module.exports = {
     selectLastId,
     selectByIdLeilao,
     atualizarLeilao,
+    selectLeilaoByFiltro,
     deletar
 }

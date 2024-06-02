@@ -41,6 +41,30 @@ const selectLoteById = async function(id) {
     }
 }
 
+const selectLoteByFiltro = async function(params) {
+
+    try{
+
+        let keys = Object.keys(params)
+       
+        let condition
+        keys.forEach(async key => {
+            if (condition) {
+                condition += ` and ${key} like "%${params[key]}%"`
+            } else {
+                condition = `${key} like "%${params[key]}%"`
+            }
+        })
+        let sql = `select id, nome, data_inicio, descricao, reserva, status_id as status, leilao_id as leilao from tbl_lote where ${condition}`
+
+        let rsLote = await prisma.$queryRawUnsafe(sql)
+
+        return rsLote
+    }catch(error){
+        return false
+    }
+}
+
 const insertLote = async function(dados) {
 
     let dadosLote = dados
@@ -180,6 +204,7 @@ const selectLastInsertId = async function () {
 module.exports = {
     selectAllLotes,
     selectLoteById,
+    selectLoteByFiltro,
     insertLote,
     insertCategoriaLote,
     updateLote,
