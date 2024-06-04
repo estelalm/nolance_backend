@@ -14,7 +14,7 @@ const prisma = new PrismaClient
 const selectAllLances = async function() {
 
     try{
-        let sql = `select id, data, valor, lote_id as lote, usuario_id as usuario from tbl_lance`
+        let sql = `select id, data_lance, valor, lote_id as lote, usuario_id as usuario from tbl_lance`
 
         let rsLances = await prisma.$queryRawUnsafe(sql)
 
@@ -31,7 +31,7 @@ const selectLanceById = async function(id) {
     let idLance = id
 
     try{
-        let sql = `select id, data, valor, lote_id as lote, usuario_id as usuario from tbl_lance where id = ${idLance}`
+        let sql = `select id, data_lance, valor, lote_id as lote, usuario_id as usuario from tbl_lance where id = ${idLance}`
 
         let rsLance = await prisma.$queryRawUnsafe(sql)
 
@@ -55,7 +55,7 @@ const selectLanceByFiltro = async function(params) {
                 condition = `${key} like "%${params[key]}%"`
             }
         })
-        let sql = `select id, data, valor, lote_id as lote, usuario_id as usuario from tbl_lance where ${condition}`
+        let sql = `select id, data_lance, valor, lote_id as lote, usuario_id as usuario from tbl_lance where ${condition}`
         console.log(sql)
 
         let rsLance = await prisma.$queryRawUnsafe(sql)
@@ -69,7 +69,7 @@ const selectLanceByFiltro = async function(params) {
 const selectArrematante = async function(idLote) {
 
     try{
-        let sql = `select id, data, max(valor) as valor, lote_id as lote, usuario_id as usuario from tbl_lance where lote_id = ${idLote}`
+        let sql = `select id, data_lance, max(valor) as valor, lote_id as lote, usuario_id as usuario from tbl_lance where lote_id = ${idLote}`
 
         let rsLance = await prisma.$queryRawUnsafe(sql)
 
@@ -85,34 +85,8 @@ const insertLance = async function(dados) {
     let dadosLance = dados
 
     try{
-        let sql = `insert into tbl_lance(data, valor, lote_id, usuario_id) values 
-                ('${dadosLance.data}', ${dadosLance.valor}, ${dadosLance.lote}, ${dadosLance.usuario});`
-
-        let rsLance = await prisma.$executeRawUnsafe(sql)
-
-        return rsLance
-    }catch(error){
-        console.log(error)
-        return false
-    }
-}
-
-
-
-const updateLance = async function(dadosLance, idLance) {
-
-    let dados = dadosLance
-    let id = idLance
-
-    try{
-        let sql = `update tbl_lance set
-                  nome =  '${dados.nome}',
-                  data_inicio = '${dadosLance.data_inicio}', 
-                  descricao = '${dadosLance.descricao}', 
-                  reserva = ${dadosLance.reserva}, 
-                  status_id = ${dadosLance.status},
-                  leilao_id =${dadosLance.leilao}
-                  where id = ${id}`
+        let sql = `insert into tbl_lance(data_lance, valor, lote_id, usuario_id) values 
+                ('${dadosLance.data_lance}', ${dadosLance.valor}, ${dadosLance.lote}, ${dadosLance.usuario});`
 
         let rsLance = await prisma.$executeRawUnsafe(sql)
 
@@ -172,7 +146,6 @@ module.exports = {
     selectLanceByFiltro,
     selectArrematante,
     insertLance,
-    updateLance,
     deleteLance,
     selectLastInsertId
 }
