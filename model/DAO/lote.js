@@ -41,6 +41,20 @@ const selectLoteById = async function(id) {
     }
 }
 
+const selectLotesByLeilao = async function(id) {
+    let idLote = id
+
+    try {
+        let sql = `select id, nome, data_inicio, descricao, reserva, status_id, leilao_id as leilao from tbl_lote where leilao_id = ${idLote}`
+        
+        let rsLotes = await prisma.$queryRawUnsafe(sql)
+
+        return rsLotes
+    } catch (error) {
+        return false
+    }
+}
+
 const selectLoteByFiltro = async function(params) {
 
     try{
@@ -245,5 +259,6 @@ module.exports = {
     updateLote,
     updateCategoriaLote,
     deleteLote,
-    selectLastInsertId
+    selectLastInsertId,
+    selectLotesByLeilao
 }
