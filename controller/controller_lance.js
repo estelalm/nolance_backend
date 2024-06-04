@@ -59,6 +59,7 @@ const getBuscarLance = async function (id) {
             let lanceJSON = {}
 
             let dadosLance = await lancesDAO.selectLanceById(idLance)
+            console.log(dadosLance)
 
             await Promise.all(dadosLance.map(async lance =>{
                 let lanceLote = await controllerLote.getBuscarLote(lance.lote)
@@ -219,7 +220,7 @@ const setInserirLance = async function (dadosBody, contentType) {
             let novoLanceJSON = {}
 
             if (
-                dadosLance.data == "" || dadosLance.data == undefined || dadosLance.data == null || dadosLance.data.length > 10 ||
+                dadosLance.data_lance == "" || dadosLance.data_lance == undefined || dadosLance.data_lance == null || dadosLance.data_lance.length > 10 ||
                 dadosLance.valor == "" || dadosLance.valor == undefined || dadosLance.valor == null || isNaN(dadosLance.valor) ||
                 dadosLance.lote == "" || dadosLance.lote == undefined || dadosLance.lote == null || isNaN(dadosLance.lote) ||
                 dadosLance.usuario == "" || dadosLance.usuario == undefined || dadosLance.usuario == null || isNaN(dadosLance.usuario) 
@@ -245,62 +246,6 @@ const setInserirLance = async function (dadosBody, contentType) {
                 }
             }
 
-        } else {
-            return message.ERROR_CONTENT_TYPE
-        }
-
-    } catch (error) {
-        console.log(error)
-        return message.ERROR_INTERNAL_SERVER
-    }
-
-}
-
-const setAtualizarLance = async function (id, dadosBody, contentType) {
-
-    let dadosLance = dadosBody
-    let idLance = id
-
-    
-    try {
-
-        if (String(contentType).toLowerCase() == 'application/json') {
-
-            if (idLance == undefined || isNaN(idLance) || idLance == "") {
-                return message.ERROR_INVALID_ID
-            } else {
-
-                let lanceAtualizadaJSON = {}
-
-                if (dadosLance.nome == "" || dadosLance.nome == undefined || dadosLance.nome == null || dadosLance.nome.length > 45 ||
-                dadosLance.data_inicio == "" || dadosLance.data_inicio == undefined || dadosLance.data_inicio == null || dadosLance.data_inicio.length > 10 ||
-                dadosLance.descricao == "" || dadosLance.descricao == undefined || dadosLance.descricao == null || 
-                dadosLance.reserva == "" || dadosLance.reserva == undefined || dadosLance.reserva == null || isNaN(dadosLance.reserva) ||
-                dadosLance.status == "" || dadosLance.status == undefined || dadosLance.status == null || isNaN(dadosLance.status) ||
-                dadosLance.leilao == "" || dadosLance.leilao == undefined || dadosLance.leilao == null || isNaN(dadosLance.leilao)  ) {
-
-                    return message.ERROR_REQUIRED_FIELDS
-                } else {
-
-
-                    let lanceAtualizada = await lancesDAO.updateLance(dadosBody, idLance)
-
-
-                    // let dadosLanceAtualizado = await getBuscarLance(idLance)
-
-                    if (lanceAtualizada) {
-                        // lanceAtualizadaJSON.lance = dadosLanceAtualizado.lance
-                        lanceAtualizadaJSON.status_code = message.SUCCESS_UPDATED_ITEM.status_code
-                        lanceAtualizadaJSON.status = message.SUCCESS_UPDATED_ITEM.status
-                        lanceAtualizadaJSON.message = message.SUCCESS_UPDATED_ITEM.message
-
-                        return lanceAtualizadaJSON
-
-                    } else {
-                        return message.ERROR_INTERNAL_SERVER_DB
-                    }
-                }
-            }
         } else {
             return message.ERROR_CONTENT_TYPE
         }
@@ -348,6 +293,5 @@ module.exports = {
     getArrematesUsuario,
     getFiltrarLance,
     setInserirLance,
-    setAtualizarLance,
     setExcluirLance
 }
