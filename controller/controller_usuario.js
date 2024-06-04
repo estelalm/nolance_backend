@@ -1,7 +1,7 @@
 const message = require('../module/config.js')
 
 const usuarioDAO = require('../model/DAO/usuario.js')
-const categoriasDAO = require('../model/DAO/categorias.js')
+const categoriasDAO = require('../model/DAO/categoria.js')
 const interesseDAO = require('../model/DAO/interesse.js')
 
 const listUsers = async () => {
