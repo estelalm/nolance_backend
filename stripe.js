@@ -1,5 +1,4 @@
 const Stripe = require("stripe");
-const { completePayment } = require("./model/DAO/pagamento.js");
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
   apiVersion: "2022-11-15",
@@ -21,28 +20,46 @@ const handlePayment = async (event, sig) => {
   }
 };
 
-const makePayment = async (lote, lance) => {
-  const session = await stripe.checkout.sessions.create({
-    line_items: [
-      {
-        price_data: {
-          currency: "brl",
-          product_data: {
-            name: lote.nome,
-            images: /*(lote.imagens)*/ ["https://miro.medium.com/v2/resize:fit:1400/1*D0JykQxrL0IpYCZ6LH0CiA.png"],
-          },
-          unit_amount: Number(lance.preco.toFixed(2)) * 100,
-        },
-        quantity: 1,
-      },
-    ],
-    mode: 'payment',
-    payment_method_types: ['card'],
-    success_url: `https://localhost:8080?success=true`,
-    cancel_url: `https://localhost:4000?canceled=true`,
-  });
+const makePayment = async (user, data) => {
 
-  return {url: session.url}
+  let usuario = user[0].usuario[0].id
+
+  try {
+    
+    const customer = await stripe.customers.create({
+      metadata:{
+        userId: String(usuario)
+      }
+    })
+  
+    const session = await stripe.checkout.sessions.create({
+  
+      line_items: [
+        {
+          price_data: {
+            currency: "brl",
+            product_data: {
+              name: data[0].nome,
+              images: [data.imagens[0].url, data.imagens[1].url, data.imagens[2].url],
+            },
+            unit_amount: Number(user[0].valor.toFixed(2)) * 100,
+          },
+          quantity: 1,
+        },
+      ],
+      mode: 'payment',
+      payment_method_types: ['card'],
+      customer: customer.userId,
+      success_url: `https://localhost:8080?success=true`,
+      cancel_url: `https://localhost:4000?canceled=true`,
+    });
+    
+    return {url: session.url}
+    
+  } catch (error) {
+    return error
+  }
+ 
 };
 
 module.exports = {
