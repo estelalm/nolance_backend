@@ -293,6 +293,17 @@ app.get('/v1/nolance/users', cors(), async (request, response) => {
     response.json(usersData)
 })
 
+app.get('/v1/nolance/user', cors(), async (request, response) => {
+
+    let email = request.query.email
+    let senha = request.query.senha
+    let usersData = await controllerUsuarios.listUserByLogin(email, senha)
+
+    response.status(usersData.status_code)
+    response.json(usersData)
+})
+
+
 app.post('/v1/nolance/users', cors(), async (request, response) => {
     let contentType = request.header('content-type')
 
