@@ -46,7 +46,7 @@ const selectLanceByFiltro = async function(params) {
     try{
 
         let keys = Object.keys(params)
-       
+       console.log(params)
         let condition
         keys.forEach(async key => {
             if (condition) {
@@ -69,7 +69,7 @@ const selectLanceByFiltro = async function(params) {
 const selectArrematante = async function(idLote) {
 
     try{
-        let sql = `select id, data_lance, max(valor) as valor, lote_id as lote, usuario_id as usuario from tbl_lance where lote_id = ${idLote}`
+        let sql = `select distinct * from tbl_lance where lote_id = ${idLote} and valor in (select distinct max(valor) as valor from tbl_lance where lote_id = ${idLote}) `
 
         let rsLance = await prisma.$queryRawUnsafe(sql)
 
