@@ -65,6 +65,21 @@ const selectLoteByFiltro = async function(params) {
     }
 }
 
+const selectImagemLote = async function(id) {
+
+    try{
+        let sql = `select id, url from tbl_imagens_lote where lote_id=${id}`
+
+        let rsLotes = await prisma.$queryRawUnsafe(sql)
+
+        return rsLotes
+
+    }catch(error){
+        console.log(error)
+        return false
+    }
+}
+
 const insertLote = async function(dados) {
 
     let dadosLote = dados
@@ -223,6 +238,7 @@ module.exports = {
     selectAllLotes,
     selectLoteById,
     selectLoteByFiltro,
+    selectImagemLote,
     insertLote,
     insertCategoriaLote,
     insertImageLote,
