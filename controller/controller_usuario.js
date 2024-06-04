@@ -92,8 +92,8 @@ const addUser = async (dados, contentType) => {
                 dados.telefone == ''|| dados.telefone == undefined || dados.telefone == null || dados.telefone.length > 11||
                 dados.icone == '' || dados.icone == undefined || dados.icone == null || dados.icone.length > 200 ||
                 dados.data_nascimento == ''|| dados.data_nascimento == undefined || dados.data_nascimento == null || dados.data_nascimento.length > 10 ||
-                dados.cpf == '' || dados.cpf == undefined || dados.cpf == null || dados.cpf.length > 11||
-                dados.endereco_id == '' || dados.endereco_id == undefined || dados.endereco_id == null
+                dados.cpf == '' || dados.cpf == undefined || dados.cpf == null || dados.cpf.length > 11
+                // ||dados.endereco_id == '' || dados.endereco_id == undefined || dados.endereco_id == null
             ) {
                 return message.ERROR_REQUIRED_FIELDS
             } else {
@@ -119,6 +119,7 @@ const addUser = async (dados, contentType) => {
             return message.ERROR_CONTENT_TYPE 
         }
     } catch (error) {
+        console.log(error)
         return message.ERROR_INTERNAL_SERVER
     }
 }
