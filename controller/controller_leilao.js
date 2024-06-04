@@ -3,6 +3,8 @@ const leiloesDAO = require('../model/DAO/leilao.js')
 const categoriasDAO = require('../model/DAO/categoria.js')
 const modalidadesDAO = require('../model/DAO/modalidade.js')
 const comitentesDAO = require('../model/DAO/comitente.js')
+const loteDAO = require('../model/DAO/lote.js')
+const statusDAO = require('../model/DAO/status.js')
 
 const listLeiloes = async function () {
     try {
@@ -40,6 +42,57 @@ const listLeiloes = async function () {
         return leiloesJSON
     } catch (error) {
         return message.ERROR_INTERNAL_SERVER
+    }
+}
+
+const listLeilaoById = async (id) => {
+    try {
+        let leilaoJSON = {}
+
+        let dadosLeilao = await leiloesDAO.selectByIdLeilao(id)
+
+        if (dadosLeilao) {
+
+            let dadosCategoria = await categoriasDAO.selectCategoriaById(dadosLeilao[0].categoria_id)
+   
+            let dadosModalidade = await modalidadesDAO.selectByIdModalidade(dadosLeilao[0].modalidade_id)
+
+            let dadosComitente = await comitentesDAO.selectComitenteById(dadosLeilao[0].comitente_id)
+
+            await Promise.all(dadosLeilao.map(dadosLeilao => {
+                dadosLeilao.categoria_id = dadosCategoria
+                dadosLeilao.modalidade_id = dadosModalidade
+
+                dadosLeilao.comitente_id = dadosComitente
+
+            }))
+
+            let lotes = await loteDAO.selectLotesByLeilao(dadosLeilao[0].id)
+
+            for (let i = 0; i < lotes.length; i++) {
+                const lote = lotes[i];
+
+                let dadosStatus = await statusDAO.selectByIdStatus(lote.status_id)
+
+                delete lote.status_id
+                lote.status = dadosStatus
+                
+            }
+
+            leilaoJSON.leilao = dadosLeilao
+            leilaoJSON.lotes = lotes
+            leilaoJSON.qntd_lotes = lotes.length
+            leilaoJSON.status_code = 200
+
+            return leilaoJSON
+
+        } else {
+            return message.ERROR_NOT_FOUND
+        }
+
+
+    } catch (error) {
+        return false
     }
 }
 
@@ -187,5 +240,6 @@ module.exports = {
     listLeiloes,
     addLeilao,
     updateLeilao,
-    deleteLeilao
+    deleteLeilao,
+    listLeilaoById
 }
