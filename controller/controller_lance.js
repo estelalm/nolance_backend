@@ -97,11 +97,12 @@ const getArrematesUsuario = async function (id){
         } else {
             let lanceJSON = {}
 
-            let dadosLotesUsuario = await lancesDAO.selectLancesUsuario(id)
+            let dadosLotesUsuario = await lancesDAO.selectLanceByFiltro({ usuario_id: id })
 
             let lancesArray = []
             await Promise.all(dadosLotesUsuario.map(async lote =>{
                 let dadosLance = await lancesDAO.selectArrematante(lote.id)
+                console.log(dadosLance)
                 lancesArray.push(dadosLance)
             }))
             
