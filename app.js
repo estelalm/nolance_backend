@@ -11,6 +11,15 @@ const cors = require('cors')
 const {request} = require('http')
 
 const app = express()
+
+const {createPaymentIntent,confirmPayment} = require('./controller/controller_pagamento.js')
+
+app.post('/webhook', express.raw({type: 'application/json'}), async (req, res) => {
+  const result = await confirmPayment(req.body, req.headers['stripe-signature'])
+
+  res.send(result)
+})
+
 app.use(express.json())
 
 app.use((request, response, next) =>{
@@ -712,6 +721,17 @@ app.get('/v1/nolance/pagamentos', cors(), async function(request, response) {
 
     response.status(paymentsData.status_code)
     response.json(paymentsData)
+})
+
+app.post('/create-checkout-session/:id', async (req, res) => {
+    let idLote = req.params.id
+
+    const arrematante = await controllerLances.getBuscarArrematante(idLote)
+
+    const result = await createPaymentIntent(arrematante, idLote)
+   
+
+    res.send(result)
 })
 
 
