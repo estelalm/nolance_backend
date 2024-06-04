@@ -4,6 +4,9 @@ const bidDAO = require('../model/DAO/lance.js')
 const paymentsMeythodsDAO = require('../model/DAO/forma_pagamento.js')
 const usersDAO = require('../model/DAO/usuario.js')
 const enderecoDAO = require('../model/DAO/endereco.js')
+const loteDAO = require('../model/DAO/lote.js')
+const { createPayment } = require("../model/DAO/pagamento.js");
+const stripe = require("../stripe.js");
 
 const listAllPayments = async () => {
     try {   
@@ -47,27 +50,46 @@ const listAllPayments = async () => {
     }
 }
 
-const addPayment = async (dados, contentType) => {
+const createPaymentIntent = async (arrematante, idLote) => {
+    
     try {
-        if(String(contentType).toLowerCase() == 'application/json'){
-            let newPaymentJSON = {}
+        const dadosLote = await loteDAO.selectLoteById(idLote)
+        const imagensLote = await loteDAO.selectImagemLote(idLote)
+        dadosLote.imagens = imagensLote
 
-            if(dados.lance_id == "" || dados.lance_id == undefined|| dados.lance_id == null || isNaN(dados.lance_id) ||
-                dados.tbl_forma_pagamento_id== "" || dados.tbl_forma_pagamento_id == undefined|| dados.tbl_forma_pagamento_id == null || isNaN(dados.tbl_forma_pagamento_id) ||
-                dados.data_pagamento == "" || dados.data_pagamento == undefined || dados.data_pagamento == null || dados.data_pagamento.length > 19
-            ){
-                return message.ERROR_REQUIRED_FIELDS
-            } else {
-                let newPayment = await paymentsDAO.insertPayment(dados)
+        const result = await stripe.makePayment(arrematante.lance, dadosLote);
+  
+        return result;
 
-                
-            }
-        }
     } catch (error) {
         return false
     }
-}
+};
+  
+const confirmPayment = async (order, sig) => {
+    try {
+        if(order.lance_id == "" || order.lance_id == undefined|| order.lance_id == null || isNaN(order.lance_id) ||
+        order.intent_payment_id == ""|| order.intent_payment_id == undefined || order.intent_payment_id == null ||
+        order.tbl_forma_pagamento_id== "" || order.tbl_forma_pagamento_id == undefined|| order.tbl_forma_pagamento_id == null || isNaN(order.tbl_forma_pagamento_id) ||
+        order.data_pagamento == "" || order.data_pagamento == undefined || order.data_pagamento == null || order.data_pagamento.length > 19
+    ){
+        return message.ERROR_REQUIRED_FIELDS
+    } else {
+       
+        const event = await stripe.handlePayment(order, sig);
+        if (!event) return 
+  
+        await createPayment(order, event.payment_intent);
+        return { recieved: true };
+    }
+    } catch (error) {
+        return false
+    }
+    
+};
 
 module.exports = {
-    listAllPayments
+    listAllPayments,
+    createPaymentIntent,
+    confirmPayment
 }
