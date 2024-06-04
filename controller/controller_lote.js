@@ -28,6 +28,11 @@ const getListarLotes = async function () {
             lote.subcategoria = subcategoriaLote.subcategorias
         }))
 
+        await Promise.all(dadosLotes.map(async lote =>{
+            let imagensLote = await lotesDAO.selectImagemLote(lote.id)
+            lote.imagens = imagensLote
+        }))
+
         if (dadosLotes) {
             if (dadosLotes.length > 0) {
                 lotesJSON.lotes = dadosLotes
@@ -117,6 +122,10 @@ const setInserirLote = async function (dadosBody, contentType) {
                 let novaCategoriaLote
                 dadosLote.categoria.forEach(async categoria =>{
                     novaCategoriaLote = await lotesDAO.insertCategoriaLote(categoria, novoLoteId)
+                })
+                let novaImagemLote
+                dadosLote.imagens.forEach(async url =>{
+                    novaImagemLote = await lotesDAO.insertImageLote(url, novoLoteId)
                 })
                 let dadosNovoLote = await getBuscarLote(novoLoteId)
 
@@ -219,10 +228,9 @@ const setExcluirLote = async function (id) {
         } else {
             let loteExcluidaJSON = {}
 
-            let dadosCategoriaExcluida = await lotesDAO.deleteCategoriaLote(idLote)
             let dadosLoteExcluida = await lotesDAO.deleteLote(idLote)
 
-            if (dadosCategoriaExcluida && dadosLoteExcluida) {
+            if (dadosLoteExcluida) {
                 loteExcluidaJSON.status_code = message.SUCCESS_DELETED_ITEM.status_code
                 loteExcluidaJSON.status = message.SUCCESS_DELETED_ITEM.status
                 loteExcluidaJSON.message = message.SUCCESS_DELETED_ITEM.message
@@ -233,7 +241,7 @@ const setExcluirLote = async function (id) {
             }
         }
     } catch (error) {
-
+        console.log(error)
         return message.ERROR_INTERNAL_SERVER
     }
 }
