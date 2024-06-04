@@ -40,6 +40,18 @@ const selectByIdUser = async (id) => {
     }
 }
 
+const selectByLoginUser = async (email, senha) => {
+    try {
+        let sql = `select * from tbl_usuario where email = ${email} and senha = ${senha}`;
+    
+        let rsUser = await prisma.$queryRawUnsafe(sql);
+    
+        return rsUser;
+    } catch (error) {
+        return false
+    }
+}
+
 const insertNewUser = async (dados) => {
     try {
         let sql = `INSERT INTO tbl_usuario (nome, email, senha, telefone, icone, data_nascimento, cpf, endereco_id) values
@@ -93,6 +105,7 @@ const deleteUser = async (id) => {
 
 module.exports = {
     selectAllUsers,
+    selectByLoginUser,
     insertNewUser,
     selectLastId,
     updateUser,
