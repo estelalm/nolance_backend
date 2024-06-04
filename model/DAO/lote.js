@@ -100,6 +100,23 @@ const insertCategoriaLote = async function(subcategoriaId, loteId) {
     }
 }
 
+
+const insertImageLote = async function(idLote, url){
+    let id = idLote
+
+    try{
+        let sql = `insert into tbl_imagens_lote (url, lote_id) values
+        (${url},${id})`
+        
+        let rsLote = await prisma.$executeRawUnsafe(sql)
+
+        return rsLote
+    }catch(error){
+        console.log(error)
+        return false
+    }
+}
+
 const updateLote = async function(dadosLote, idLote) {
 
     let dados = dadosLote
@@ -160,21 +177,22 @@ const deleteLote = async function(idLote) {
     }
 }
 
-const deleteCategoriaLote = async function(idLote) {
 
-    let id = idLote
+// const deleteCategoriaLote = async function(idLote) {
 
-    try{
-        let sql = `delete from tbl_categoria_lote where lote_id = ${id}`
+//     let id = idLote
+
+//     try{
+//         let sql = `delete from tbl_categoria_lote where lote_id = ${id}`
         
-        let rsLote = await prisma.$executeRawUnsafe(sql)
+//         let rsLote = await prisma.$executeRawUnsafe(sql)
 
-        return rsLote
-    }catch(error){
-        console.log(error)
-        return false
-    }
-}
+//         return rsLote
+//     }catch(error){
+//         console.log(error)
+//         return false
+//     }
+// }
 
 const selectLastInsertId = async function () {
 
@@ -207,9 +225,9 @@ module.exports = {
     selectLoteByFiltro,
     insertLote,
     insertCategoriaLote,
+    insertImageLote,
     updateLote,
     updateCategoriaLote,
     deleteLote,
-    deleteCategoriaLote,
     selectLastInsertId
 }
