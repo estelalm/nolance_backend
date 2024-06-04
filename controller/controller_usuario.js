@@ -43,6 +43,44 @@ const listUsers = async () => {
     }
 }
 
+const listUserByLogin = async (email, senha) => {
+    let usersJSON = {}
+
+    let usersData = await usuarioDAO.selectByLoginUser(email, senha)
+
+    if(usersData){
+        if(usersData.length > 0){
+
+            for(let i = 0; i < usersData.length ; i++){
+                let user = usersData[i]
+                let dadosInteresses = []
+                let interesses = await interesseDAO.selectInterestByUserId(user.id)
+
+                for(let contador = 0; contador < interesses.length; contador++){
+                    let interesse = interesses[contador]
+                    delete interesses.usuario_id
+
+                    let dadosCategoria = await categoriasDAO.selectCategoriaById(interesse.categoria_id)
+
+                    dadosInteresses.push(dadosCategoria)
+
+                    user.interesses = dadosInteresses
+                }
+        
+            }
+
+            usersJSON.usuario = usersData
+            usersJSON.status_code = 200;
+
+            return usersJSON
+        } else {
+            return message.ERROR_NOT_FOUND
+        }
+    } else {
+        return message.ERROR_INTERNAL_SERVER_DB
+    }
+}
+
 const addUser = async (dados, contentType) => {
     try {
         if (String(contentType).toLowerCase() == 'application/json') {
@@ -155,6 +193,7 @@ const deleteUser = async (id) => {
 
 module.exports ={
     listUsers,
+    listUserByLogin,
     addUser,
     updateUser,
     deleteUser
