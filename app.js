@@ -518,6 +518,16 @@ app.get('/v1/nolance/leiloes', cors(), async function(request, response){
     response.json(dadosLeiloes)
 })
 
+app.get('/v1/nolance/leilao/:id', cors(), async function(request, response){
+    let idLeilao = request.params.id
+
+    let dadosLeilao = await controllerLeiloes.listLeilaoById(idLeilao)
+
+    response.status(dadosLeilao.status_code)
+    response.json(dadosLeilao)
+})
+
+
 
 app.post('/v1/nolance/leiloes', cors(), async function(request, response){
     let contentType = request.header('content-type')
