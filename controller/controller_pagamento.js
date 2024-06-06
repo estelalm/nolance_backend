@@ -9,7 +9,7 @@ const { createPayment } = require("../model/DAO/pagamento.js");
 const stripe = require("../stripe.js");
 
 const listAllPayments = async () => {
-    try {   
+    try {
         let paymentsJSON = {}
         let paymentsArray = []
 
@@ -25,7 +25,7 @@ const listAllPayments = async () => {
 
             delete item.tbl_forma_pagamento_id
             item.forma_pagamento = paymentMethodData
-         
+
             let userData = await usersDAO.selectByIdUser(bidData[0].usuario)
 
             delete userData[0].senha
@@ -39,7 +39,7 @@ const listAllPayments = async () => {
             paymentsArray.push(item)
 
         }))
-        
+
         paymentsJSON.pagamentos = paymentsArray
         paymentsJSON.quantidade = paymentsArray.length
         paymentsJSON.status_code = 200
@@ -51,14 +51,14 @@ const listAllPayments = async () => {
 }
 
 const createPaymentIntent = async (arrematante, idLote) => {
-    
+
     try {
         const dadosLote = await loteDAO.selectLoteById(idLote)
         const imagensLote = await loteDAO.selectImagemLote(idLote)
         dadosLote.imagens = imagensLote
-     
+
         const result = await stripe.makePayment(arrematante.lance[0], dadosLote);
-        
+
         return result;
 
     } catch (error) {
@@ -66,33 +66,56 @@ const createPaymentIntent = async (arrematante, idLote) => {
         return false
     }
 };
-  
-const confirmPayment = async (order, sig) => {
-    const pedido = JSON.parse(order.toString())
 
+const confirmPayment = async (order, sig) => {
     try {
         const event = await stripe.handlePayment(order, sig);
-         
-        if (!event) return 
+        if (!event) return;
 
-        if(order.lance_id == "" || order.lance_id == undefined|| order.lance_id == null || isNaN(order.lance_id) ||
-        order.intent_payment_id == ""|| order.intent_payment_id == undefined || order.intent_payment_id == null ||
-        order.tbl_forma_pagamento_id == "" || order.tbl_forma_pagamento_id == undefined|| order.tbl_forma_pagamento_id == null || isNaN(order.tbl_forma_pagamento_id) ||
-        order.data_pagamento == "" || order.data_pagamento == undefined || order.data_pagamento == null || order.data_pagamento.length > 19
-    ){
-        return message.ERROR_REQUIRED_FIELDS
-    } else {
-  
-        await createPayment(order, event.payment_intent);
-        return { recieved: true };
-    }
+        const { lanceId, paymentMethod, currentDateTimeFormatted } = extractPaymentInfo(event);
+
+        if (isMissingRequiredFields(lanceId, paymentMethod, currentDateTimeFormatted)) {
+            return message.ERROR_REQUIRED_FIELDS;
+        }
+
+        const paymentMethodId = getPaymentMethodId(paymentMethod);
+        if (paymentMethodId === null) {
+            return message.ERROR_INVALID_PAYMENT_METHOD_ID;
+        } else{
+            event.forma_pagamento_id = paymentMethodId
+        }
+
+        const payment = await createPayment(event, event.paymentIntentSucceeded.payment_intent, currentDateTimeFormatted);
+        return { received: true, pagamento: payment };
     } catch (error) {
-        return false
+       
+        return false;
     }
-    
 };
 
+const extractPaymentInfo = (event) => {
+    const lanceId = Number(event.customer.metadata.lanceId);
+    const paymentMethod = event.paymentIntentSucceeded.payment_method_types[0];
+    const currentDateTime = new Date();
+    const currentDateTimeFormatted = currentDateTime.toISOString().replace('T',' ').slice(0, 19);
 
+    return { lanceId, paymentMethod, currentDateTimeFormatted };
+};
+
+const isMissingRequiredFields = (lanceId, paymentMethod, currentDateTimeFormatted) => {
+    return (
+        lanceId === "" || lanceId === undefined || lanceId === null || isNaN(lanceId) ||
+        paymentMethod === "" || paymentMethod === undefined || paymentMethod === null ||
+        currentDateTimeFormatted === "" || currentDateTimeFormatted === undefined || currentDateTimeFormatted === null || currentDateTimeFormatted > 19
+    );
+};
+
+const getPaymentMethodId = (paymentMethod) => {
+    if (paymentMethod === "card") {
+        return 1;
+    }
+    return null;
+};
 
 module.exports = {
     listAllPayments,
