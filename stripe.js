@@ -55,8 +55,8 @@ const makePayment = async (user, data) => {
       mode: 'payment',
       payment_method_types: ['card'],
       customer: customer.id,
-      success_url: `http://localhost:5500/success.html`,
-      cancel_url: `http://localhost:5500/canceled.html`,
+      success_url: `http://localhost:5501/success.html`,
+      cancel_url: `http://localhost:5501/canceled.html`,
     });
   
     return {url: session.url}
