@@ -42,12 +42,13 @@ const selectByIdUser = async (id) => {
 
 const selectByLoginUser = async (email, senha) => {
     try {
-        let sql = `select * from tbl_usuario where email = ${email} and senha = ${senha}`;
+        let sql = `select * from tbl_usuario where email = '${email}' and senha = '${senha}'`;
     
         let rsUser = await prisma.$queryRawUnsafe(sql);
     
         return rsUser;
     } catch (error) {
+        console.log(error)
         return false
     }
 }
