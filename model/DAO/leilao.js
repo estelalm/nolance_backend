@@ -89,6 +89,7 @@ const atualizarLeilao = async (dados, id) => {
                   data_inicio = '${dados.data_inicio}',
                   data_final = '${dados.data_final}',
                   retirada = '${dados.retirada}',
+                  foto_capa = '${dados.foto_capa}',
                   categoria_id = ${dados.categoria_id},
                   comitente_id = ${dados.comitente_id},
                   modalidade_id = ${dados.modalidade_id}
