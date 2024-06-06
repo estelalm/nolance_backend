@@ -22,6 +22,21 @@ const listLeiloes = async function () {
 
             let dadosComitente = await comitentesDAO.selectComitenteById(leilao.comitente_id)
 
+            let lotes = await loteDAO.selectLotesByLeilao(leilao.id)
+
+            for (let i = 0; i < lotes.length; i++) {
+                const lote = lotes[i];
+
+                let dadosStatus = await statusDAO.selectByIdStatus(lote.status_id)
+
+                delete lote.status_id
+                lote.status = dadosStatus
+                
+            }
+
+            
+            leilao.lotes = lotes
+
             delete leilao.categoria_id
             leilao.categoria = dadosCategoria
 
