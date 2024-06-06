@@ -3,6 +3,7 @@ const message = require('../module/config.js')
 const usuarioDAO = require('../model/DAO/usuario.js')
 const categoriasDAO = require('../model/DAO/categoria.js')
 const interesseDAO = require('../model/DAO/interesse.js')
+const controllerEndereco = require('./controller_endereco.js')
 
 const listUsers = async () => {
     let usersJSON = {}
@@ -98,6 +99,12 @@ const addUser = async (dados, contentType) => {
                 return message.ERROR_REQUIRED_FIELDS
             } else {
 
+                let dadosEndereco = {
+                    cep: dados.cep,
+                    numero: dados.numero
+                }
+                let newAddress = await controllerEndereco.adicionarEndereco(dadosEndereco, contentType)
+                dados.endereco_id = newAddress.endereco.id
                 let newUser = await usuarioDAO.insertNewUser(dados)
 
                 let id = await usuarioDAO.selectLastId()
