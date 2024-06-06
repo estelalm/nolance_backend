@@ -13,6 +13,7 @@ const ERROR_INTERNAL_SERVER     = {status: false, status_code: 500, message: 'N�
 const ERROR_INTERNAL_SERVER_DB  = {status: false, status_code: 500, message: 'Não foi possível processar a requisição, devido a um erro no acesso ao Banco de Dados. Contate o administrador da API!'}
 const ERROR_CONTENT_TYPE        = {status: false, status_code: 415, message: 'O content-type encaminhado na requisição não é suportado pelo servidor. Deve-se encaminhar apenas requisições com application/json'}
 const ERROR_ALREADY_EXISTS      = {status: false, status_code: 400, message: 'Login ou nome inseridos já existem no banco de dados.'}
+const ERROR_INVALID_PAYMENT_METHOD_ID =  {status: false, status_code: 500, message: 'Id de método de pagamento iválido. Contate o administrador da API!'}
 
 /*******************************************MENSAGENS DE SUCESSO*******************************************/
 const SUCCESS_CREATED_ITEM      = {status: true, status_code: 201, message : 'Item criado com sucesso!'}
@@ -26,6 +27,7 @@ module.exports = {
     ERROR_INTERNAL_SERVER,
     ERROR_INTERNAL_SERVER_DB,
     ERROR_CONTENT_TYPE,
+    ERROR_INVALID_PAYMENT_METHOD_ID,
     ERROR_ALREADY_EXISTS,
     SUCCESS_CREATED_ITEM,
     SUCCESS_DELETED_ITEM,
