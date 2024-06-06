@@ -20,7 +20,7 @@ const handlePayment = async (event, sig) => {
           return {paymentIntentSucceeded, customer}
         }
       })
-    
+  
       return data;
    
   }
@@ -32,7 +32,8 @@ const makePayment = async (user, data) => {
     
     const customer = await stripe.customers.create({
       metadata:{
-        userId: String(usuario)
+        userId: String(usuario),
+        lanceId: String(user.id)
       }
     })
 
