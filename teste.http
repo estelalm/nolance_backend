@@ -1,0 +1,1 @@
+post http://localhost:8080/create-checkout-session/1
