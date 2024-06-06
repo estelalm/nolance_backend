@@ -13,20 +13,23 @@ const selectAllPayments = async () => {
   }
 };
 
-const createPayment = async (dados, intent_payment_id) => {
+const createPayment = async (dados, intent_payment_id, data_pagamento) => {
   try {
+    let forma_pagamento_id = Number(dados.forma_pagamento_id)
+
     let sql = `insert into tbl_pagamento (lance_id, intent_payment_id ,tbl_forma_pagamento_id, completado, data_pagamento ) values
-                    (   ${dados.lance_id} ,
-                         ${intent_payment_id}, 
-                         ${dados.forma_pagamento_id}, 
-                         false, 
-                         '${dados.data_pagamento}')`;
+                    (   ${dados.customer.metadata.lanceId} ,
+                        '${intent_payment_id}', 
+                         ${forma_pagamento_id}, 
+                         true, 
+                         '${data_pagamento}');`;
 
     let result = await prisma.$executeRawUnsafe(sql);
-
+ 
     if (result) return true;
     else return false;
   } catch (error) {
+
     return false;
   }
 };
@@ -44,28 +47,9 @@ const findByIntentPayment = async (intent_payment_id) => {
   }
 };
 
-const completePayment = async (dados, intent_payment_id) => {
-  try {
-    let sql = `UPDATE tbl_pagamento SET 
-                    lance_id = ${dados.lance_id},
-                    intent_payment_id = ${intent_payment_id},
-                    tbl_forma_pagamento_id = ${dados.forma_pagamento_id},
-                    completado = true,
-                    data_pagamento = '${dados.data_pagamento}'
-                WHERE intent_payment_id = ${intent_payment_id}  `;
-
-    let result = await prisma.$executeRawUnsafe(sql);
-
-    if (result) return true;
-    else return false;
-  } catch (error) {
-    return false;
-  }
-};
 
 module.exports = {
   selectAllPayments,
-  completePayment,
   findByIntentPayment,
   createPayment,
 };
