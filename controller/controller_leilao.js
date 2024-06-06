@@ -124,7 +124,9 @@ const addLeilao = async (dados, contentType) => {
                 dados.retirada == "" || dados.retirada == undefined || dados.retirada == null || dados.retirada.length > 200 ||
                 dados.categoria_id == "" || dados.categoria_id == undefined || dados.categoria_id == null || isNaN(dados.categoria_id) ||
                 dados.comitente_id == "" || dados.comitente_id == undefined || dados.comitente_id == null || isNaN(dados.comitente_id) ||
-                dados.modalidade_id == "" || dados.modalidade_id == undefined || dados.modalidade_id == null || isNaN(dados.modalidade_id)) {
+                dados.modalidade_id == "" || dados.modalidade_id == undefined || dados.modalidade_id == null || isNaN(dados.modalidade_id) ||
+                dados.foto-capa == "" || dados.foto_capa == undefined || dados.foto-capa == null || foto_capa.length > 250
+                ) {
                 return message.ERROR_REQUIRED_FIELDS
             } else {
 
@@ -182,7 +184,8 @@ const updateLeilao = async (dados, contentType, id) => {
                     dados.retirada == "" || dados.retirada == undefined || dados.retirada == null || dados.retirada.length > 200 ||
                     dados.categoria_id == "" || dados.categoria_id == undefined || dados.categoria_id == null || isNaN(dados.categoria_id) ||
                     dados.comitente_id == "" || dados.comitente_id == undefined || dados.comitente_id == null || isNaN(dados.comitente_id) ||
-                    dados.modalidade_id == "" || dados.modalidade_id == undefined || dados.modalidade_id == null || isNaN(dados.modalidade_id)) {
+                    dados.modalidade_id == "" || dados.modalidade_id == undefined || dados.modalidade_id == null || isNaN(dados.modalidade_id||
+                        dados.foto-capa == "" || dados.foto_capa == undefined || dados.foto-capa == null || foto_capa.length > 250)) {
                     return message.ERROR_REQUIRED_FIELDS
                 } else {
 
