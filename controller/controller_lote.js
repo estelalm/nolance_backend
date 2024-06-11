@@ -32,6 +32,7 @@ const getListarLotes = async function () {
             let imagensLote = await lotesDAO.selectImagemLote(lote.id)
             lote.imagens = imagensLote
         }))
+        
 
         if (dadosLotes) {
             if (dadosLotes.length > 0) {
@@ -131,7 +132,6 @@ const setInserirLote = async function (dadosBody, contentType) {
                 let novaImagemLote
                 dadosLote.imagens.forEach(async url =>{
                     novaImagemLote = await lotesDAO.insertImageLote(url, novoLoteId)
-                    console.log(novaImagemLote)
                 })
                 let dadosNovoLote = await getBuscarLote(novoLoteId)
 

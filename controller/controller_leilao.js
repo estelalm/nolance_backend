@@ -74,6 +74,8 @@ const listLeilaoById = async (id) => {
 
             let dadosComitente = await comitentesDAO.selectComitenteById(dadosLeilao[0].comitente_id)
 
+            let lotes = await loteDAO.selectLotesByLeilao(dadosLeilao[0].id)
+
             await Promise.all(dadosLeilao.map(dadosLeilao => {
                 dadosLeilao.categoria_id = dadosCategoria
                 dadosLeilao.modalidade_id = dadosModalidade
@@ -82,7 +84,6 @@ const listLeilaoById = async (id) => {
 
             }))
 
-            let lotes = await loteDAO.selectLotesByLeilao(dadosLeilao[0].id)
 
             for (let i = 0; i < lotes.length; i++) {
                 const lote = lotes[i];
@@ -134,6 +135,7 @@ const addLeilao = async (dados, contentType) => {
                 let leilaoId = await leiloesDAO.selectLastId()
 
                 let leilao = await leiloesDAO.selectByIdLeilao(leilaoId[0].id)
+                
 
                 let dadosCategoria = await categoriasDAO.selectCategoriaById(dados.categoria_id)
 

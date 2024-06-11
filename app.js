@@ -45,7 +45,9 @@ const io = new Server(httpServer, {
 io.on("connection", (socket) => {
     console.log('User connected:'+ socket.id); 
   });
-  io.on('enviar-lance', (lance) =>{
+
+  io.on("enviar-lance", (lance) =>{
+      console.log('aa')
     socket.broadcast.emit('new-lance', 'alguem deu um lance:' + lance)
   })
 
@@ -729,9 +731,8 @@ app.post('/v1/nolance/lance', cors(), bodyParserJSON, async (request, response, 
     let contentType = request.header('content-type')
     let dadosBody = request.body
    
-
     let resultDadosLance = await controllerLances.setInserirLance(dadosBody, contentType)
-    io.broadcast.emit('new-lance', dadosBody);
+     io.emit('enviar-lance', dadosBody);
     
     response.status(resultDadosLance.status_code)
     response.json(resultDadosLance)
