@@ -15,11 +15,20 @@ const app = express()
 const { createServer } = require("http");
 const { Server } = require("socket.io");
 const httpServer = createServer(app);
-const io = new Server(httpServer, {});
+const io = new Server(httpServer, {
+    cors: {
+        origin: '*',
+        methods: ['GET', 'POST', 'PUT','DELETE'],
+        allowedHeaders: ['Content-Type']
+    }
+});
 
 io.on("connection", (socket) => {
-    console.log(socket.id); 
+    console.log('User connected:'+ socket.id); 
   });
+  io.on('enviar-lance', (lance) =>{
+    socket.broadcast.emit('new-lance', 'alguem deu um lance:' + lance)
+  })
 
 const {createPaymentIntent,confirmPayment} = require('./controller/controller_pagamento.js')
 
@@ -720,7 +729,8 @@ app.post('/v1/nolance/lance', cors(), bodyParserJSON, async (request, response, 
    
 
     let resultDadosLance = await controllerLances.setInserirLance(dadosBody, contentType)
-
+    io.broadcast.emit('new-lance', dadosBody);
+    
     response.status(resultDadosLance.status_code)
     response.json(resultDadosLance)
 
